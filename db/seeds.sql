@@ -1,4 +1,4 @@
-INSERT INTO parties (names, descriptions)
+INSERT INTO parties (name, description)
 VALUES (
         'JS Juggernauts',
         'The JS Juggernauts eat, breathe, and sleep JavaScript. They can build everything you could ever want in JS, including a new kitchen sink.'
