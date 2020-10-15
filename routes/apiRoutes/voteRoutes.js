@@ -32,7 +32,7 @@ router.post("/vote", ({ body }, res) => {
 });
 
 router.get("/vote", (req, res) => {
- //count up the votes per candidate and append candidates to votes table with highest count first
+ //count up the votes per candidate (with GROUP BY and COUNT) and append candidates to votes table with highest count first
   const sql = `SELECT candidates.*, parties.name AS party_name, COUNT(candidate_id) AS count
                FROM votes
                LEFT JOIN candidates ON votes.candidate_id = candidates.id
