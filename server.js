@@ -82,6 +82,7 @@ app.delete("/api/candidate/:id", (req, res) => {
 
     res.json({
       message: "successfully deleted",
+      //have to use ES5 syntax for function above, so we keep the 'this' context intact
       changes: this.changes,
     });
   });
@@ -116,6 +117,85 @@ app.post("/api/candidate", ({ body }, res) => {
       message: "success",
       data: body,
       id: this.lastID,
+    });
+  });
+});
+
+//update a candidate's party_id if there's a need
+app.put("/api/candidate/:id", (req, res) => {
+  //check to see that the 'party_id' is provided before we make any updates
+  const errors = inputCheck(req.body, "party_id");
+
+  if (errors) {
+    res.status(400).json({ error: errors });
+    return;
+  }
+  //once we checked that party id was provided, update the data
+  const sql = `UPDATE candidates SET party_id = ? 
+               WHERE id = ?`;
+  const params = [req.body.party_id, req.params.id];
+
+  db.run(sql, params, function (err, result) {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+
+    res.json({
+      message: "success",
+      data: req.body,
+      changes: this.changes,
+    });
+  });
+});
+
+//get all the parties
+app.get("/api/parties", (req, res) => {
+  const sql = `SELECT * FROM parties`;
+  const params = [];
+  db.all(sql, params, (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+
+    res.json({
+      message: "success",
+      data: rows,
+    });
+  });
+});
+
+//get a single party based on the id
+app.get("/api/party/:id", (req, res) => {
+  const sql = `SELECT * FROM parties WHERE id = ?`;
+  const params = [req.params.id];
+  db.get(sql, params, (err, row) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+
+    res.json({
+      message: "success",
+      data: row,
+    });
+  });
+});
+
+//Delete a party
+app.delete("/api/party/:id", (req, res) => {
+  const sql = `DELETE FROM parties WHERE id = ?`;
+  const params = [req.params.id];
+  db.run(sql, params, function (err, result) {
+    if (err) {
+      res.status(400).json({ error: res.message });
+      return;
+    }
+
+    res.json({
+      message: "successfully deleted",
+      changes: this.changes,
     });
   });
 });
